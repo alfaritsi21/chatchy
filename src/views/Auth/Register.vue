@@ -5,15 +5,26 @@
         <p class="login-text">
           <a-row>
             <a-col :span="5">
-              <a-icon type="left" />
+              <a-icon type="left" @click.prevent="onLogin" class="back" />
             </a-col>
             <a-col :span="19" class="register-text">Register</a-col>
           </a-row>
         </p>
       </div>
       <p class="greeting">Let’s create your account !</p>
+      <a-alert
+        v-if="visible"
+        :message="errorMessage"
+        type="error"
+        closable
+        :after-close="handleClose"
+        class="alert"
+      />
+      <!-- <a-alert :message="errorMessage" type="info" close-text="Close Now" /> -->
+      <!-- <a-alert type="error" :message="errorMessage" banner /> -->
+      <!-- <p class="greeting">{{ errorMessage }}</p> -->
 
-      <a-form :form="form" @submit="handleSubmit">
+      <a-form>
         <a-form-item v-bind="formItemLayout">
           <span slot="label">
             Name&nbsp;
@@ -23,111 +34,28 @@
           </span>
           <a-input
             class="form-name"
-            v-decorator="[
-              'name',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: 'Please input your name!',
-                    whitespace: true
-                  }
-                ]
-              }
-            ]"
+            placeholder="Input your username"
+            v-model="form.user_name"
           />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="E-mail">
-          <a-input
-            v-decorator="[
-              'email',
-              {
-                rules: [
-                  {
-                    type: 'email',
-                    message: 'The input is not valid E-mail!'
-                  },
-                  {
-                    required: true,
-                    message: 'Please input your E-mail!'
-                  }
-                ]
-              }
-            ]"
-          />
+          <a-input placeholder="Input your email" v-model="form.user_email" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="Password" has-feedback>
           <a-input
-            v-decorator="[
-              'password',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: 'Please input your password!'
-                  },
-                  {
-                    validator: validateToNextPassword
-                  }
-                ]
-              }
-            ]"
+            placeholder="Input your password"
+            v-model="form.user_password"
             type="password"
-          />
-        </a-form-item>
-        <a-form-item
-          v-bind="formItemLayout"
-          label="Confirm Password"
-          has-feedback
-        >
-          <a-input
-            v-decorator="[
-              'confirm',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: 'Please confirm your password!'
-                  },
-                  {
-                    validator: compareToFirstPassword
-                  }
-                ]
-              }
-            ]"
-            type="password"
-            @blur="handleConfirmBlur"
           />
         </a-form-item>
 
         <a-form-item v-bind="formItemLayout" label="Phone Number">
           <a-input
-            v-decorator="[
-              'phone',
-              {
-                rules: [
-                  { required: true, message: 'Please input your phone number!' }
-                ]
-              }
-            ]"
+            placeholder="Input your phone number"
+            v-model="form.user_phone"
             style="width: 100%"
           >
-            <a-select
-              slot="addonBefore"
-              v-decorator="['prefix', { initialValue: '86' }]"
-              style="width: 70px"
-            >
-              <a-select-option value="86"> +62 </a-select-option>
-              <a-select-option value="87"> +60 </a-select-option>
-              <a-select-option value="87"> +61 </a-select-option>
-            </a-select>
           </a-input>
-        </a-form-item>
-        <a-form-item v-bind="tailFormItemLayout">
-          <a-checkbox v-decorator="['agreement', { valuePropName: 'checked' }]">
-            I have read the
-            <a href=""> agreement </a>
-          </a-checkbox>
         </a-form-item>
       </a-form>
       <a-form-item>
@@ -135,6 +63,7 @@
           type="primary"
           html-type="submit"
           class="login-button login-form-button"
+          @click.prevent="onSubmit"
         >
           <p>Register</p>
         </a-button>
@@ -145,10 +74,20 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   // eslint-disable-next-line space-before-function-paren
   data() {
     return {
+      form: {
+        user_name: '',
+        user_email: '',
+        user_password: '',
+        user_phone: ''
+      },
+      errorMessage: '',
+      visible: false,
       confirmDirty: false,
       autoCompleteResult: [],
       formItemLayout: {
@@ -175,54 +114,33 @@ export default {
       }
     }
   },
-  // eslint-disable-next-line space-before-function-paren
-  beforeCreate() {
-    this.form = this.$form.createForm(this, { name: 'register' })
-  },
   methods: {
-    // eslint-disable-next-line space-before-function-paren
-    handleSubmit(e) {
-      e.preventDefault()
-      this.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values)
-        }
-      })
+    ...mapActions(['register']),
+    onSubmit() {
+      // console.log(this.form)
+      this.register(this.form)
+        .then(result => {
+          console.log(result)
+          setTimeout(() => {
+            this.$router.push('/login')
+          }, 0)
+        })
+        .catch(error => {
+          console.log(error)
+          this.errorMessage = error.data.msg
+          this.visible = true
+        })
     },
-    // eslint-disable-next-line space-before-function-paren
-    handleConfirmBlur(e) {
-      const value = e.target.value
-      this.confirmDirty = this.confirmDirty || !!value
+    onLogin() {
+      this.$router.push('/login')
     },
-    // eslint-disable-next-line space-before-function-paren
-    compareToFirstPassword(rule, value, callback) {
-      const form = this.form
-      if (value && value !== form.getFieldValue('password')) {
-        // eslint-disable-next-line standard/no-callback-literal
-        callback('Two passwords that you enter is inconsistent!')
-      } else {
-        callback()
-      }
+    handleClose() {
+      this.visible = false
     },
-    // eslint-disable-next-line space-before-function-paren
-    validateToNextPassword(rule, value, callback) {
-      const form = this.form
-      if (value && this.confirmDirty) {
-        form.validateFields(['confirm'], { force: true })
-      }
-      callback()
-    },
-    // eslint-disable-next-line space-before-function-paren
-    handleWebsiteChange(value) {
-      let autoCompleteResult
-      if (!value) {
-        autoCompleteResult = []
-      } else {
-        autoCompleteResult = ['.com', '.org', '.net'].map(
-          (domain) => `${value}${domain}`
-        )
-      }
-      this.autoCompleteResult = autoCompleteResult
+    success() {
+      this.$message
+        .loading('Register in progress..', 2)
+        .then(() => this.$message.success('Register Success', 2))
     }
   }
 }
@@ -231,15 +149,18 @@ export default {
 <style scoped>
 .login {
   background-color: #e5e5e5;
-  height: 700px;
+  height: 629px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+.alert {
+  margin: 10px;
+}
+
 .login-container {
   width: 500px;
-  height: 620px;
   padding: 20px;
 
   background-color: #ffffff;
@@ -354,5 +275,9 @@ export default {
 
 .login-form {
   padding: 20px;
+}
+
+.back:hover {
+  cursor: pointer;
 }
 </style>

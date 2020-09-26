@@ -5,9 +5,14 @@
         <Menu />
       </a-col>
       <a-col :span="17" class="app-chat">
-        <div class="chat-container">
-          <!-- <Chat class="chat-sign" /> -->
+        <div class="chat-container" v-show="showChatroom">
           <Chatroom />
+        </div>
+        <div class="chat-container" v-show="showContact">
+          <Contact />
+        </div>
+        <div class="chat-container" v-show="showInvite">
+          <Invite />
         </div>
       </a-col>
     </a-row>
@@ -18,13 +23,30 @@
 import Menu from './Menu'
 // import Chat from './views/Chat'
 import Chatroom from './Chatroom'
+import Contact from './Contact'
+import Invite from './Invite'
 
 export default {
   name: 'App',
   components: {
     Menu,
     // Chat,
-    Chatroom
+    Chatroom,
+    Contact,
+    Invite
+  },
+  data() {
+    return {
+      showChatroom: false,
+      showContact: false,
+      showInvite: true
+    }
+  },
+  methods: {
+    contact() {
+      this.showChatroom = false
+      this.showContact = true
+    }
   }
 }
 </script>
@@ -59,6 +81,13 @@ export default {
 
 .app-menu {
   border-right: solid 1px #e5e5e5;
+  height: 625px;
+
+  overflow-y: scroll;
+}
+
+.app-menu::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-sign {

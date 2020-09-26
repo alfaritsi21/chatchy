@@ -3,21 +3,25 @@
     <div class="login-container">
       <p class="login-text">Login</p>
       <p class="greeting">Hi, Welcome Back !</p>
+      <a-alert
+        v-if="visible"
+        :message="errorMessage"
+        type="error"
+        closable
+        :after-close="handleClose"
+        class="alert"
+      />
 
       <a-form
         id="components-form-demo-normal-login"
         :form="form"
         class="login-form"
-        @submit="handleSubmit"
       >
         <a-form-item>
           <a-input
             size="large"
-            v-decorator="[
-          'userName',
-          { rules: [{ required: true, message: 'Please input your email!' }] },
-        ]"
-            placeholder="Email"
+            placeholder="Type your email here"
+            v-model="form.user_email"
           >
             <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
           </a-input>
@@ -25,12 +29,9 @@
         <a-form-item>
           <a-input
             size="large"
-            v-decorator="[
-          'password',
-          { rules: [{ required: true, message: 'Please input your Password!' }] },
-        ]"
             type="password"
-            placeholder="Password"
+            placeholder="Type your password here"
+            v-model="form.user_password"
           >
             <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
           </a-input>
@@ -45,19 +46,69 @@
           },
         ]"
           >Remember me</a-checkbox>-->
-          <a class="forgot-form login-form-forgot" href>Forgot password?</a>
-          <a-button type="primary" html-type="submit" class="login-button login-form-button">
+          <a class="forgot-form login-form-forgot" @click.prevent="onForgot"
+            >Forgot password?</a
+          >
+          <a-button
+            type="primary"
+            html-type="submit"
+            class="login-button login-form-button"
+            @click.prevent="onSubmit"
+          >
             <p>Log in</p>
           </a-button>
-          <p class="signup">
+          <p class="signup" @click.prevent="onRegister">
             Don't have an account?
-            <a href>Sign Up</a>
+            <a>Sign Up</a>
           </p>
         </a-form-item>
       </a-form>
     </div>
   </div>
 </template>
+
+<script>
+import { mapActions } from 'vuex'
+
+export default {
+  name: 'Login',
+  data() {
+    return {
+      form: {
+        user_email: '',
+        user_password: ''
+      },
+      errorMessage: '',
+      visible: false
+    }
+  },
+  methods: {
+    ...mapActions(['login']),
+    onSubmit() {
+      // console.log(this.form)
+      this.login(this.form)
+        .then(result => {
+          console.log(result)
+          this.$router.push('/')
+        })
+        .catch(error => {
+          console.log(error)
+          this.errorMessage = error
+          this.visible = true
+        })
+    },
+    onRegister() {
+      this.$router.push('/register')
+    },
+    onForgot() {
+      this.$router.push('/forgot')
+    },
+    handleClose() {
+      this.visible = false
+    }
+  }
+}
+</script>
 
 <style scoped>
 .login {
@@ -70,7 +121,6 @@
 
 .login-container {
   width: 400px;
-  height: 450px;
   padding: 20px;
 
   background-color: #ffffff;

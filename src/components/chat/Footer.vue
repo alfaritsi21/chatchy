@@ -4,19 +4,31 @@
     <a-row>
       <a-col :span="20">
         <div class="components-input-demo-size message-area">
-          <a-input size="large" placeholder="Type a message" class="input-message" />
+          <a-input
+            size="large"
+            placeholder="Type a message"
+            class="input-message"
+          />
         </div>
       </a-col>
       <a-col :span="1">
-        <a-icon type="plus" :style="{ fontSize: '25px', color: '#7E98DF' }" class="message-send" />
+        <a-icon
+          type="plus"
+          :style="{ fontSize: '25px', color: '#7E98DF' }"
+          class="message-send"
+        />
       </a-col>
       <a-col :span="1">
-        <a-icon type="smile" :style="{ fontSize: '25px', color: '#7E98DF' }" class="message-send" />
-      </a-col>
-      <a-col :span="2">
         <a-icon
-          type="play-square"
-          :style="{ fontSize: '40px', color: '#7E98DF' }"
+          type="smile"
+          :style="{ fontSize: '25px', color: '#7E98DF' }"
+          class="message-send"
+        />
+      </a-col>
+      <a-col :span="1">
+        <a-icon
+          type="arrow-right"
+          :style="{ fontSize: '30px', color: '#7E98DF' }"
           class="message-send"
         />
       </a-col>
