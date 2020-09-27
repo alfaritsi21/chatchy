@@ -5,10 +5,6 @@
 </template>
 
 <style scoped>
-.chat {
-  height: 629px;
-}
-
 .chat h5 {
   font-family: Rubik;
   font-style: normal;

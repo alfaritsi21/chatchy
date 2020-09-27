@@ -5,23 +5,20 @@
         <a-row>
           <a-col :span="3" class="photo">
             <div class="information">
-              <img
-                src="https://oshiprint.in/image/data/poster/new/mqp114.jpeg"
-                alt
-              />
+              <img v-bind:src="urlApi + userData.user_image" alt />
             </div>
           </a-col>
           <a-col :span="18" class="details">
             <a-row>
               <a-col :span="24">
                 <p class="details-name">
-                  <b>Jean Alfredo Oliver</b>
+                  <b>{{ userData.user_nickname }}</b>
                 </p>
               </a-col>
             </a-row>
             <a-row>
               <a-col :span="24">
-                <p class="details-message">@username</p>
+                <p class="details-message">@{{ userData.user_name }}</p>
               </a-col>
             </a-row>
           </a-col>
@@ -35,23 +32,26 @@
           <template #expandIcon="props">
             <a-icon type="caret-right" :rotate="props.isActive ? 90 : 0" />
           </template>
-          <a-collapse-panel key="1" header="Details" :style="customStyle">
+          <a-collapse-panel
+            key="1"
+            header="Tap Here to Details"
+            :style="customStyle"
+          >
             <div class="phone">
               <p class="title-details">Account</p>
             </div>
             <div class="phone">
               <p class="title-profile">Phone Number :</p>
-              <p class="detail-profile">+62851721621</p>
+              <p class="detail-profile">{{ userData.user_phone }}</p>
             </div>
             <div class="username">
               <p class="title-profile">Usename :</p>
-              <p class="detail-profile">@brobroqi</p>
+              <p class="detail-profile">@{{ userData.user_name }}</p>
             </div>
             <div class="bio">
               <p class="title-profile">Bio :</p>
               <p class="detail-profile">
-                Saya adalah seorang kapiten. Mempunyai pedang panjang. kalau
-                berjalan prok prok prok
+                {{ userData.user_bio }}
               </p>
             </div>
             <div class="phone">
@@ -67,7 +67,13 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="detail-profile edit-setting" @click="editProfile">
+                  <p
+                    class="detail-profile edit-setting"
+                    @click="
+                      editProfile()
+                      initiateFormValue()
+                    "
+                  >
                     Edit Profile
                   </p>
                 </a-col>
@@ -80,31 +86,37 @@
         <a-row>
           <a-col :span="6" class="photo">
             <div class="information">
-              <a-upload-dragger
+              <!-- <a-upload-dragger
                 name="file"
-                :multiple="true"
+                :multiple="false"
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                :headers="headers"
                 @change="handleChange"
                 class="upload-image"
               >
                 <p class="ant-upload-drag-icon">
                   <a-icon type="inbox" />
                 </p>
-              </a-upload-dragger>
+              </a-upload-dragger> -->
+              <a-upload-dragger
+                type="file"
+                @change="handleFile"
+                :multiple="false"
+                class="upload-image"
+                ><p class="ant-upload-drag-icon">
+                  <a-icon type="inbox" /></p
+              ></a-upload-dragger>
             </div>
           </a-col>
           <a-col :span="16" class="details">
             <a-row>
               <a-col :span="22">
                 <p class="details-name">
-                  <a-input size="small" placeholder="edit your name" />
-                </p>
-              </a-col>
-            </a-row>
-            <a-row>
-              <a-col :span="22">
-                <p class="details-message">
-                  <a-input size="small" placeholder="edit your username" />
+                  <a-input
+                    style="margin-left: 10px"
+                    placeholder="edit your name"
+                    v-model="form.user_nickname"
+                  />
                 </p>
               </a-col>
             </a-row>
@@ -127,13 +139,19 @@
             <div class="phone">
               <p class="title-profile">Phone Number :</p>
               <p class="detail-profile">
-                <a-input placeholder="edit your phone number" />
+                <a-input
+                  placeholder="edit your phone number"
+                  v-model="form.user_phone"
+                />
               </p>
             </div>
             <div class="username">
               <p class="title-profile">Usename :</p>
               <p class="detail-profile">
-                <a-input placeholder="edit your username" />
+                <a-input
+                  placeholder="edit your username"
+                  v-model="form.user_name"
+                />
               </p>
             </div>
             <div class="bio">
@@ -142,10 +160,11 @@
                 <a-textarea
                   placeholder="Type your bio"
                   :auto-size="{ minRows: 2, maxRows: 6 }"
+                  v-model="form.user_bio"
                 />
               </p>
             </div>
-            <a-button class="button-save" block>
+            <a-button class="button-save" @click="editProfile" block>
               <p class="text-button">Save</p>
             </a-button>
             <a-button
@@ -164,17 +183,63 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
+      urlApi: process.env.VUE_APP_URL,
+      headers: {
+        authorization: 'authorization-text'
+      },
       showDetails: true,
       showEdit: false,
       customStyle:
-        'background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden'
+        'background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden',
+      user_id: [],
+      form: {
+        user_id: '',
+        user_nickname: '',
+        user_name: '',
+        user_email: '',
+        user_phone: '',
+        user_image: '',
+        user_bio: ''
+      }
     }
   },
+  computed: {
+    ...mapGetters(['userData'])
+  },
   methods: {
+    ...mapActions(['editUser']),
+    initiateFormValue() {
+      this.showDetails = false
+      this.showEdit = true
+      this.form = {
+        user_id: this.userData.user_id,
+        user_nickname: this.userData.user_nickname,
+        user_name: this.userData.user_name,
+        user_email: this.userData.user_email,
+        user_phone: this.userData.user_phone,
+        user_image: this.userData.user_image,
+        user_bio: this.userData.user_bio
+      }
+    },
+
     editProfile() {
+      this.editUser(this.form)
+        .then((response) => {
+          console.log(this.userData)
+
+          console.log(response)
+          this.showDetails = true
+          this.showEdit = false
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+
       this.showDetails = false
       this.showEdit = true
     },
@@ -182,16 +247,14 @@ export default {
       this.showDetails = true
       this.showEdit = false
     },
-    handleChange(info) {
-      const status = info.file.status
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList)
-      }
-      if (status === 'done') {
-        this.$message.success(`${info.file.name} file uploaded successfully.`)
-      } else if (status === 'error') {
-        this.$message.error(`${info.file.name} file upload failed.`)
-      }
+    handleFile(event) {
+      this.form.user_image = event.file.originFileObj
+      console.log(event.file.originFileObj)
+    },
+
+    onSubmit(evt) {
+      evt.preventDefault()
+      alert(JSON.stringify(this.form))
     }
   }
 }

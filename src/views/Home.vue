@@ -5,6 +5,9 @@
         <Menu />
       </a-col>
       <a-col :span="17" class="app-chat">
+        <div v-show="showChat">
+          <Chat class="empty-chat-container" />
+        </div>
         <div class="chat-container" v-show="showChatroom">
           <Chatroom />
         </div>
@@ -21,26 +24,29 @@
 
 <script>
 import Menu from './Menu'
-// import Chat from './views/Chat'
+import Chat from './Chat'
 import Chatroom from './Chatroom'
 import Contact from './Contact'
 import Invite from './Invite'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
     Menu,
-    // Chat,
+    Chat,
     Chatroom,
     Contact,
     Invite
   },
-  data() {
-    return {
-      showChatroom: false,
-      showContact: false,
-      showInvite: true
-    }
+  computed: {
+    ...mapGetters({
+      showChat: 'getShowChat',
+      showChatroom: 'getShowChatroom',
+      showContact: 'getShowContact',
+      showInvite: 'getShowInvite'
+    })
   },
   methods: {
     contact() {
@@ -94,6 +100,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.empty-chat-container {
+  margin-top: 300px;
 }
 
 /* .app-menu {

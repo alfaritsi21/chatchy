@@ -17,13 +17,11 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="text-dropdown">
-                    Setting
-                  </p>
+                  <p class="text-dropdown">Setting</p>
                 </a-col>
               </a-row>
             </a-menu-item>
-            <a-menu-item key="2"
+            <a-menu-item key="2" @click="setShowContact"
               ><a-row>
                 <a-col :span="4">
                   <a-icon
@@ -32,9 +30,7 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="text-dropdown">
-                    Contact
-                  </p>
+                  <p class="text-dropdown">Contact</p>
                 </a-col>
               </a-row></a-menu-item
             >
@@ -47,9 +43,7 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="text-dropdown">
-                    Calls
-                  </p>
+                  <p class="text-dropdown">Calls</p>
                 </a-col>
               </a-row></a-menu-item
             >
@@ -62,13 +56,11 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="text-dropdown">
-                    Save Messages
-                  </p>
+                  <p class="text-dropdown">Save Messages</p>
                 </a-col>
               </a-row>
             </a-menu-item>
-            <a-menu-item key="5">
+            <a-menu-item key="5" @click="setShowInvite">
               <a-row>
                 <a-col :span="4">
                   <a-icon
@@ -77,9 +69,7 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="text-dropdown">
-                    Invite Friends
-                  </p>
+                  <p class="text-dropdown">Invite Friends</p>
                 </a-col>
               </a-row>
             </a-menu-item>
@@ -92,9 +82,20 @@
                   />
                 </a-col>
                 <a-col :span="20">
-                  <p class="text-dropdown">
-                    Chatchy FAQ
-                  </p>
+                  <p class="text-dropdown">Chatchy FAQ</p>
+                </a-col>
+              </a-row>
+            </a-menu-item>
+            <a-menu-item key="6" @click="handleLogout">
+              <a-row>
+                <a-col :span="4">
+                  <a-icon
+                    type="logout"
+                    :style="{ fontSize: '18px', color: '#ffffff' }"
+                  />
+                </a-col>
+                <a-col :span="20">
+                  <p class="text-dropdown">Logout</p>
                 </a-col>
               </a-row>
             </a-menu-item>
@@ -144,14 +145,12 @@
       <a-col :span="8" class="indicator" @click="isActive">Unread</a-col>
     </a-row>
     <div class="card-container">
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
+      <div @click="targetClick(11)">
+        <Card />
+      </div>
+      <div @click="targetClick(23)">
+        <Card />
+      </div>
     </div>
   </div>
 </template>
@@ -160,6 +159,8 @@
 // @ is an alias to /src
 import Card from '../components/Card'
 import Profile from '../components/Profile'
+import { mapActions, mapMutations, mapGetters } from 'vuex'
+import io from 'socket.io-client'
 
 export default {
   name: 'Menu',
@@ -167,11 +168,45 @@ export default {
     Card,
     Profile
   },
+  data() {
+    return {
+      target: { user_id: 1 },
+      socket: io('http://localhost:3001'),
+      user: { user_nickname: '' }
+    }
+  },
+  created() {
+    this.initializeUser()
+  },
+  computed: {
+    ...mapGetters(['userData', 'getTarget'])
+  },
   methods: {
+    initializeUser() {
+      this.user = this.userData
+      this.target = this.getTarget
+    },
+    ...mapMutations([
+      'setShowChat',
+      'setShowChatroom',
+      'setShowContact',
+      'setShowInvite'
+    ]),
+    ...mapActions(['setTargetAction']),
+    targetClick(id) {
+      this.target.user_id = id
+      this.setTargetAction(this.target)
+      this.setShowChatroom()
+      this.socket.emit('getMessage', {
+        user: this.user,
+        target: this.target
+      })
+    },
     // eslint-disable-next-line space-before-function-paren
     onSearch(value) {
       console.log(value)
-    }
+    },
+    ...mapActions({ handleLogout: 'logout' })
     // eslint-disable-next-line space-before-function-paren
   }
 }

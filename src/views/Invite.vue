@@ -3,7 +3,11 @@
     <div class="contact-navbar">
       <a-row>
         <a-col :span="2">
-          <a-icon type="left" :style="{ fontSize: '18px', color: '#ffffff' }" />
+          <a-icon
+            type="left"
+            :style="{ fontSize: '18px', color: '#ffffff' }"
+            @click="setShowChat"
+          />
         </a-col>
         <a-col :span="22"><p class="title-navbar">Invite a Friend</p></a-col>
       </a-row>
@@ -31,9 +35,19 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'Contact',
-  components: {}
+  components: {},
+  methods: {
+    ...mapMutations([
+      'setShowChat',
+      'setShowChatroom',
+      'setShowContact',
+      'setShowInvite'
+    ])
+  }
 }
 </script>
 

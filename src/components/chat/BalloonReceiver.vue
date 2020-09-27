@@ -35,7 +35,7 @@
   border-radius: 20px;
 }
 
-.text-chat {
+.text-chat-receiver {
   text-align: left;
   padding: 0 20px;
   font-family: Rubik;

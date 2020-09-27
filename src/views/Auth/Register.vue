@@ -12,6 +12,7 @@
         </p>
       </div>
       <p class="greeting">Let’s create your account !</p>
+
       <a-alert
         v-if="visible"
         :message="errorMessage"
@@ -20,6 +21,15 @@
         :after-close="handleClose"
         class="alert"
       />
+      <a-alert
+        v-else-if="visibles"
+        :message="successMessage"
+        type="success"
+        closable
+        :after-close="handleClose"
+        class="alert"
+      />
+
       <!-- <a-alert :message="errorMessage" type="info" close-text="Close Now" /> -->
       <!-- <a-alert type="error" :message="errorMessage" banner /> -->
       <!-- <p class="greeting">{{ errorMessage }}</p> -->
@@ -87,7 +97,9 @@ export default {
         user_phone: ''
       },
       errorMessage: '',
+      successMessage: '',
       visible: false,
+      visibles: false,
       confirmDirty: false,
       autoCompleteResult: [],
       formItemLayout: {
@@ -119,13 +131,15 @@ export default {
     onSubmit() {
       // console.log(this.form)
       this.register(this.form)
-        .then(result => {
+        .then((result) => {
           console.log(result)
+          this.successMessage = 'Succesfully created account'
+          this.visibles = true
           setTimeout(() => {
             this.$router.push('/login')
-          }, 0)
+          }, 2000)
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error)
           this.errorMessage = error.data.msg
           this.visible = true

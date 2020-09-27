@@ -3,7 +3,10 @@
     <a-row>
       <a-col :span="8" class="photo">
         <div class="information">
-          <img src="https://oshiprint.in/image/data/poster/new/mqp114.jpeg" alt />
+          <img
+            src="https://oshiprint.in/image/data/poster/new/mqp114.jpeg"
+            alt
+          />
         </div>
       </a-col>
       <a-col :span="16" class="details">
@@ -22,7 +25,10 @@
             <p class="details-message">Mabar skuy</p>
           </a-col>
           <a-col :span="6">
-            <a-badge count="109" :number-style="{ backgroundColor: '#7E98DF' }" />
+            <a-badge
+              count="109"
+              :number-style="{ backgroundColor: '#7E98DF' }"
+            />
           </a-col>
         </a-row>
       </a-col>
