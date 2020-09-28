@@ -34,8 +34,10 @@
           </template>
           <a-collapse-panel
             key="1"
-            header="Tap Here For Details"
+            header="- Tap Here For Details -"
             :style="customStyle"
+            :show-arrow="false"
+            :bordered="false"
           >
             <div class="phone">
               <p class="title-details">Account</p>

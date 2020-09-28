@@ -4,7 +4,7 @@ export default {
     showChatroom: false,
     showContact: false,
     showInvite: false,
-    target: { user_id: 0 }
+    target: { user_id: 0, user_nickname: '', user_image: '' }
   },
   mutations: {
     setShowChat(state, payload) {
@@ -34,6 +34,8 @@ export default {
     },
     setTarget(state, payload) {
       state.target.user_id = payload.user_id
+      state.target.user_nickname = payload.user_nickname
+      state.target.user_image = payload.user_image
     }
   },
   actions: {

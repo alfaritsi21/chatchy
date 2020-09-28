@@ -1,6 +1,36 @@
 <template>
   <div class="chat">
-    <Navbar />
+    <div class="menu">
+      <!-- HEADER -->
+      <a-row class="chatroom-header">
+        <a-col :span="3" class="photo">
+          <div class="information">
+            <img v-bind:src="urlApi + target.user_image" alt />
+          </div>
+        </a-col>
+        <a-col :span="18" class="details">
+          <a-row>
+            <a-col :span="18">
+              <p class="details-name">
+                <b>{{ target.user_nickname }}</b>
+              </p>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="18">
+              <p class="details-message">online</p>
+            </a-col>
+          </a-row>
+        </a-col>
+        <a-col :span="3" class="photo">
+          <a-icon
+            type="appstore"
+            class="menu-icon-plus"
+            :style="{ fontSize: '27px', color: '#7E98DF' }"
+          />
+        </a-col>
+      </a-row>
+    </div>
     <div class="chat-room">
       <p v-if="typing">
         <em>{{ typing.user_nickname }} is typing a message...</em>
@@ -90,13 +120,13 @@
 import io from 'socket.io-client'
 import { mapGetters } from 'vuex'
 
-import Navbar from '../components/chat/Navbar'
+// import Navbar from '../components/chat/Navbar'
 // import Footer from '../components/chat/Footer'
 
 export default {
   name: 'Chatroom',
   components: {
-    Navbar
+    // Navbar
     // Footer
   },
   data() {
@@ -192,7 +222,11 @@ export default {
 .chat-room {
   height: 450px;
   padding: 30px;
-  background-image: url('https://lh3.googleusercontent.com/proxy/3FKR5yj4qaXMzLCxyWV3g0Wx2ECwnvuBpz6w_pXn2zMquUcfQCQGDjCx-xDBiG3S1zGYfpd7');
+  background-color: gainsboro;
+}
+
+.chatroom-header {
+  background-color: #ededed;
 }
 
 .balloon-sender {

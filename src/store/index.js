@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Auth from './modules/auth'
-import user from './modules/user'
 import menu from './modules/menu'
 
 import createPersistedState from 'vuex-persistedstate'
@@ -14,7 +13,6 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     Auth,
-    user,
     menu
   },
   getters: {},

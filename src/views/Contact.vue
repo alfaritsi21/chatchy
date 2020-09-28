@@ -32,17 +32,52 @@
       <div class="contact-list" v-for="(item, index) in contacts" :key="index">
         <div>
           <a-row>
+            <a-col :span="3" class="photo"> </a-col>
             <a-col :span="3" class="photo">
               <div class="information">
                 <img v-bind:src="urlApi + item.user_image" alt />
               </div>
             </a-col>
-            <a-col :span="18" class="details">
+            <a-col :span="15" class="details">
               <a-row>
-                <a-col :span="24">
+                <a-col :span="12">
                   <p class="details-name">
                     <b>{{ item.user_nickname }}</b>
                   </p>
+                </a-col>
+                <a-col :span="6">
+                  <a-button class="contact-button" @click="showModal">
+                    <p class="details-button">
+                      <b>View Location</b>
+                    </p>
+                  </a-button>
+                  <a-modal
+                    v-model="visible"
+                    title="Friend's Location"
+                    @ok="handleOk"
+                  >
+                    <GmapMap
+                      :center="coordinate"
+                      :zoom="10"
+                      map-type-id="terrain"
+                      style="width: 500px; height: 300px"
+                    >
+                      <GmapMarker
+                        :position="coordinate"
+                        :clickable="true"
+                        :draggable="true"
+                        @click="clickMarker"
+                        icon="https://img.icons8.com/color/48/000000/map-pin.png"
+                      />
+                    </GmapMap>
+                  </a-modal>
+                </a-col>
+                <a-col :span="6">
+                  <a-button class="contact-button" @click="targetClick(item)">
+                    <p class="details-button">
+                      <b>Send Message</b>
+                    </p>
+                  </a-button>
                 </a-col>
               </a-row>
               <a-row>
@@ -62,6 +97,7 @@
 <script>
 // import ContactList from '../components/ContactList'
 import { mapActions, mapMutations, mapGetters } from 'vuex'
+import io from 'socket.io-client'
 
 export default {
   name: 'Contact',
@@ -70,11 +106,31 @@ export default {
   },
   data() {
     return {
-      urlApi: process.env.VUE_APP_URL
+      target: { user_id: 0, user_nickname: '', user_image: '' },
+      socket: io('http://localhost:3001'),
+      user: { user_nickname: '' },
+      urlApi: process.env.VUE_APP_URL,
+      visible: false,
+      coordinate: {
+        lat: 0,
+        lng: 0
+      }
     }
   },
   created() {
+    this.initializeUser()
     this.getContacts()
+    this.$getLocation()
+      .then((coordinates) => {
+        this.coordinate = {
+          lat: coordinates.lat,
+          lng: coordinates.lng
+        }
+        // console.log(coordinates)s
+      })
+      .catch((error) => {
+        alert(error)
+      })
   },
   computed: {
     ...mapGetters({
@@ -82,14 +138,44 @@ export default {
     })
   },
   methods: {
+    initializeUser() {
+      this.user = this.userData
+      this.target = this.getTarget
+    },
     ...mapMutations([
       'setShowChat',
       'setShowChatroom',
       'setShowContact',
       'setShowInvite'
     ]),
-    ...mapActions(['getContacts']),
-    onSearch() {}
+    ...mapActions(['getContacts', 'setTargetAction']),
+    targetClick(target) {
+      this.target = target
+      this.setTargetAction(this.target)
+      this.setShowChatroom()
+      this.socket.emit('getMessage', {
+        user: this.user,
+        target: this.target
+      })
+    },
+    onSearch() {},
+    showModal() {
+      this.visible = true
+    },
+    handleOk(e) {
+      console.log(e)
+      this.visible = false
+    },
+    clickMarker(position) {
+      console.log('clicked')
+      console.log(position)
+      console.log(position.latLng.lat())
+      console.log(position.latLng.lng())
+      this.coordinate = {
+        lat: position.latLng.lat(),
+        lng: position.latLng.lng()
+      }
+    }
   }
 }
 </script>
@@ -148,5 +234,17 @@ export default {
 
 .search {
   margin: 15px 0;
+}
+
+.contact-button {
+  margin-top: 10px;
+  background-color: #7e98df;
+  border-radius: 10px;
+  height: 30px;
+}
+
+.details-button {
+  padding-top: 5px;
+  color: #ffffff;
 }
 </style>

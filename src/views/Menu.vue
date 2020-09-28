@@ -170,7 +170,7 @@ export default {
   },
   data() {
     return {
-      target: { user_id: 1 },
+      target: { user_id: 0, user_nickname: '', user_image: '' },
       socket: io('http://localhost:3001'),
       user: { user_nickname: '' }
     }
