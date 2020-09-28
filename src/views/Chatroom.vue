@@ -34,7 +34,7 @@
               />
             </a-col>
             <a-col :span="16" class="style-balloon">
-              <p class="text-chat">
+              <p class="text-chat-receiver">
                 <strong>{{ value.user.user_nickname }} : </strong
                 >{{ value.message }}
               </p>
@@ -133,10 +133,10 @@ export default {
     //   user: this.user,
     //   target: this.target
     // })
-    this.socket.on('chatMessage', data => {
+    this.socket.on('chatMessage', (data) => {
       this.messages.push(data)
     })
-    this.socket.on('typingMessage', data => {
+    this.socket.on('typingMessage', (data) => {
       this.typing = data
     })
   },

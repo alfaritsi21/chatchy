@@ -29,28 +29,30 @@
       </a-col>
     </a-row>
     <div class="body-contact">
-      <div class="contact-list">
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
-        <hr />
-        <ContactList />
+      <div class="contact-list" v-for="(item, index) in contacts" :key="index">
+        <div>
+          <a-row>
+            <a-col :span="3" class="photo">
+              <div class="information">
+                <img v-bind:src="urlApi + item.user_image" alt />
+              </div>
+            </a-col>
+            <a-col :span="18" class="details">
+              <a-row>
+                <a-col :span="24">
+                  <p class="details-name">
+                    <b>{{ item.user_nickname }}</b>
+                  </p>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="24">
+                  <p class="details-message">@{{ item.user_name }}</p>
+                </a-col>
+              </a-row>
+            </a-col>
+          </a-row>
+        </div>
         <hr />
       </div>
     </div>
@@ -58,13 +60,26 @@
 </template>
 
 <script>
-import ContactList from '../components/ContactList'
-import { mapMutations } from 'vuex'
+// import ContactList from '../components/ContactList'
+import { mapActions, mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'Contact',
   components: {
-    ContactList
+    // ContactList
+  },
+  data() {
+    return {
+      urlApi: process.env.VUE_APP_URL
+    }
+  },
+  created() {
+    this.getContacts()
+  },
+  computed: {
+    ...mapGetters({
+      contacts: 'getContactData'
+    })
   },
   methods: {
     ...mapMutations([
@@ -72,7 +87,9 @@ export default {
       'setShowChatroom',
       'setShowContact',
       'setShowInvite'
-    ])
+    ]),
+    ...mapActions(['getContacts']),
+    onSearch() {}
   }
 }
 </script>
@@ -88,7 +105,7 @@ export default {
 } */
 
 .body-contact {
-  height: 550px;
+  height: 490px;
   overflow-y: scroll;
 }
 

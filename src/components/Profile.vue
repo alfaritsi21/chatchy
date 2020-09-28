@@ -34,7 +34,7 @@
           </template>
           <a-collapse-panel
             key="1"
-            header="Tap Here to Details"
+            header="Tap Here For Details"
             :style="customStyle"
           >
             <div class="phone">
@@ -54,6 +54,25 @@
                 {{ userData.user_bio }}
               </p>
             </div>
+            <!-- ================================================== -->
+            <div class="phone">
+              <p class="title-details">Location</p>
+            </div>
+            <GmapMap
+              :center="coordinate"
+              :zoom="10"
+              map-type-id="terrain"
+              style="width: 500px; height: 300px"
+            >
+              <GmapMarker
+                :position="coordinate"
+                :clickable="true"
+                :draggable="true"
+                @click="clickMarker"
+                icon="https://img.icons8.com/color/48/000000/map-pin.png"
+              />
+            </GmapMap>
+            <!-- ======================================================= -->
             <div class="phone">
               <p class="title-details">Settings</p>
             </div>
@@ -189,6 +208,10 @@ export default {
   data() {
     return {
       urlApi: process.env.VUE_APP_URL,
+      coordinate: {
+        lat: 0,
+        lng: 0
+      },
       headers: {
         authorization: 'authorization-text'
       },
@@ -210,6 +233,19 @@ export default {
   },
   computed: {
     ...mapGetters(['userData'])
+  },
+  created() {
+    this.$getLocation()
+      .then((coordinates) => {
+        this.coordinate = {
+          lat: coordinates.lat,
+          lng: coordinates.lng
+        }
+        // console.log(coordinates)s
+      })
+      .catch((error) => {
+        alert(error)
+      })
   },
   methods: {
     ...mapActions(['editUser']),
@@ -255,6 +291,16 @@ export default {
     onSubmit(evt) {
       evt.preventDefault()
       alert(JSON.stringify(this.form))
+    },
+    clickMarker(position) {
+      console.log('clicked')
+      console.log(position)
+      console.log(position.latLng.lat())
+      console.log(position.latLng.lng())
+      this.coordinate = {
+        lat: position.latLng.lat(),
+        lng: position.latLng.lng()
+      }
     }
   }
 }

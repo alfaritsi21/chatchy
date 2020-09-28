@@ -4,6 +4,7 @@ export default {
   state: {
     urlApi: process.env.VUE_APP_URL,
     user: {},
+    contact: [],
     token: localStorage.getItem('token') || null
   },
   mutations: {
@@ -24,6 +25,9 @@ export default {
     },
     setLogin(state, payload) {
       state.isOn = payload
+    },
+    setContact(state, payload) {
+      state.contact = payload
     }
   },
   actions: {
@@ -136,6 +140,17 @@ export default {
           return Promise.reject(error)
         }
       )
+    },
+    getContacts(context, payload) {
+      axios
+        .get(`${context.state.urlApi}contact/${context.state.user.user_id}}`)
+        .then(response => {
+          console.log(response.data)
+          context.commit('setContact', response.data.data)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   getters: {
@@ -156,6 +171,9 @@ export default {
     },
     isLogin2(state) {
       return state.isOn
+    },
+    getContactData(state) {
+      return state.contact
     }
   }
 }

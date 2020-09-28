@@ -9,7 +9,7 @@
             @click="setShowChat"
           />
         </a-col>
-        <a-col :span="22"><p class="title-navbar">Invite a Friend</p></a-col>
+        <a-col :span="22"><p class="title-navbar">Invite Friend</p></a-col>
       </a-row>
     </div>
     <a-row class="search">
