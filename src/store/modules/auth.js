@@ -151,6 +151,20 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    deleteContacts(context, payload) {
+      console.log(payload)
+      const data = new FormData()
+      data.append('owner', payload.owner)
+      data.append('saved', payload.saved)
+      axios
+        .post(`${context.state.urlApi}contact/delete`, payload, {})
+        .then(response => {
+          console.log(response.data)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   getters: {

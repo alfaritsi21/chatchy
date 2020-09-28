@@ -12,7 +12,7 @@
         <a-col :span="22"><p class="title-navbar">My Contact</p></a-col>
       </a-row>
     </div>
-    <a-row class="search">
+    <!-- <a-row class="search">
       <a-col :span="17" class="header-logo">
         <a-input
           placeholder="Type for search contact"
@@ -27,7 +27,7 @@
           style="color: rgba(0, 0, 0, 0.25)"
         />
       </a-col>
-    </a-row>
+    </a-row> -->
     <div class="body-contact">
       <div class="contact-list" v-for="(item, index) in contacts" :key="index">
         <div>
@@ -40,7 +40,7 @@
             </a-col>
             <a-col :span="15" class="details">
               <a-row>
-                <a-col :span="12">
+                <a-col :span="6">
                   <p class="details-name">
                     <b>{{ item.user_nickname }}</b>
                   </p>
@@ -79,6 +79,16 @@
                     </p>
                   </a-button>
                 </a-col>
+                <a-col :span="6">
+                  <a-button
+                    class="contact-button-delete"
+                    @click="deleteContact(item)"
+                  >
+                    <p class="details-button">
+                      <b>Delete Contact</b>
+                    </p>
+                  </a-button>
+                </a-col>
               </a-row>
               <a-row>
                 <a-col :span="24">
@@ -108,7 +118,7 @@ export default {
     return {
       target: { user_id: 0, user_nickname: '', user_image: '' },
       socket: io('http://localhost:3001'),
-      user: { user_nickname: '' },
+      user: { user_id: 0, user_nickname: '', user_image: '' },
       urlApi: process.env.VUE_APP_URL,
       visible: false,
       coordinate: {
@@ -134,13 +144,15 @@ export default {
   },
   computed: {
     ...mapGetters({
-      contacts: 'getContactData'
+      contacts: 'getContactData',
+      userDatas: 'userData'
     })
   },
   methods: {
     initializeUser() {
-      this.user = this.userData
+      this.user = this.userDatas
       this.target = this.getTarget
+      console.log(this.userDatas)
     },
     ...mapMutations([
       'setShowChat',
@@ -148,7 +160,7 @@ export default {
       'setShowContact',
       'setShowInvite'
     ]),
-    ...mapActions(['getContacts', 'setTargetAction']),
+    ...mapActions(['getContacts', 'setTargetAction', 'deleteContacts']),
     targetClick(target) {
       this.target = target
       this.setTargetAction(this.target)
@@ -157,6 +169,19 @@ export default {
         user: this.user,
         target: this.target
       })
+    },
+    deleteContact(item) {
+      const data = {
+        owner: this.user.user_id,
+        saved: item.user_id
+      }
+      this.deleteContacts(data)
+        .then((response) => {
+          this.getContacts()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     onSearch() {},
     showModal() {
@@ -239,6 +264,13 @@ export default {
 .contact-button {
   margin-top: 10px;
   background-color: #7e98df;
+  border-radius: 10px;
+  height: 30px;
+}
+
+.contact-button-delete {
+  margin-top: 10px;
+  background-color: #c70323;
   border-radius: 10px;
   height: 30px;
 }
