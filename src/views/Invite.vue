@@ -17,7 +17,8 @@
         <a-input
           placeholder="Type for finding a contact"
           size="large"
-          @search="onSearch"
+          v-model="inputSearch"
+          v-on:keyup.enter="searchContact()"
           class="search-box"
         />
         <a-icon
@@ -29,24 +30,101 @@
       </a-col>
     </a-row>
     <div class="body-contact">
-      <div class="contact-list"></div>
+      <!-- <div class="contact-list" v-for="(item, index) in contacts" :key="index"> -->
+      <div class="contact-list">
+        <div>
+          <a-row>
+            <a-col :span="3" class="photo"> </a-col>
+            <a-col :span="3" class="photo">
+              <div class="information">
+                <!-- <img v-bind:src="urlApi + item.user_image" alt /> -->
+                <img v-bind:src="urlApi + resultContact.user_image" alt />
+              </div>
+            </a-col>
+            <a-col :span="15" class="details">
+              <a-row>
+                <a-col :span="12">
+                  <p class="details-name">
+                    <b>{{ resultContact.user_nickname }}</b>
+                  </p>
+                </a-col>
+                <a-col :span="12">
+                  <a-button class="contact-button" @click="addContact()">
+                    <p class="details-button">
+                      <a-icon
+                        type="user-add"
+                        size="large"
+                        :style="{ fontSize: '20px', color: '#ffffff' }"
+                      />
+                    </p>
+                  </a-button>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="24">
+                  <p class="details-message">@{{ resultContact.user_name }}</p>
+                </a-col>
+              </a-row>
+            </a-col>
+          </a-row>
+        </div>
+        <hr />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Contact',
   components: {},
+  data() {
+    return {
+      inputSearch: '',
+      resultContact: {},
+      user: {}
+    }
+  },
+  computed: {
+    ...mapGetters(['userData'])
+  },
   methods: {
     ...mapMutations([
       'setShowChat',
       'setShowChatroom',
       'setShowContact',
       'setShowInvite'
-    ])
+    ]),
+    ...mapActions(['getContacts', 'searchContacts', 'addContacts']),
+    searchContact() {
+      const data = {
+        user_name: this.inputSearch
+      }
+      this.searchContacts(data)
+        .then((response) => {
+          console.log(response)
+          this.resultContact = response[0]
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    addContact() {
+      const data = {
+        owner: this.userData.user_id,
+        saved: this.resultContact.user_id
+      }
+      console.log(data)
+      this.addContacts(data)
+        .then((response) => {
+          this.getContacts()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
   }
 }
 </script>
@@ -105,5 +183,24 @@ export default {
 
 .search {
   margin: 15px 0;
+}
+
+.contact-button {
+  margin-top: 15px;
+  background-color: #7e98df;
+  border-radius: 10px;
+  height: 30px;
+}
+
+.contact-button-delete {
+  margin-top: 10px;
+  background-color: #c70323;
+  border-radius: 10px;
+  height: 30px;
+}
+
+.details-button {
+  padding-top: 5px;
+  color: #ffffff;
 }
 </style>

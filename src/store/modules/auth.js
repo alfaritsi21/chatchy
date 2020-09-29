@@ -153,12 +153,40 @@ export default {
         })
     },
     deleteContacts(context, payload) {
-      console.log(payload)
       const data = new FormData()
       data.append('owner', payload.owner)
       data.append('saved', payload.saved)
       axios
         .post(`${context.state.urlApi}contact/delete`, payload, {})
+        .then(response => {
+          console.log(response.data)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    searchContacts(context, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`${context.state.urlApi}user/search/username`, payload, {})
+          .then(response => {
+            console.log(response)
+            resolve(response.data.data)
+          })
+          .catch(error => {
+            reject(error.response)
+            console.log(error.response)
+            reject(error.response.msg)
+          })
+      })
+    },
+
+    addContacts(context, payload) {
+      const data = new FormData()
+      data.append('owner', payload.owner)
+      data.append('saved', payload.saved)
+      axios
+        .post(`${context.state.urlApi}contact/addcontact`, payload, {})
         .then(response => {
           console.log(response.data)
         })
