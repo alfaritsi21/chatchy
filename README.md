@@ -1,6 +1,15 @@
 <h1 align='center'>Vue JS - Chatchy</h1>
+<p align="center">
+    <a href="https://chatchy.netlify.app/">View Demo</a>
+    ·
+    <a href="https://github.com/alfaritsi21/chatchy/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/alfaritsi21/chatchy/issues">Request Feature</a>
+  </p>
 
-A system website app for sending message on a realtime. [More about Vue](https://vuejs.org/)
+![Image Banner](https://raw.githubusercontent.com/alfaritsi21/chatchy/master/chatchy.jpg)
+
+Catchy is the best choice for you if you want to send message to your friend. On Chatchy you can invite your friend and add them into your contact list. Chatchy are build with socket technology so the message you've been sent can received by your friend on a realtime situation. [More about Vue](https://vuejs.org/)
 
 ## Built With
 
@@ -11,34 +20,29 @@ A system website app for sending message on a realtime. [More about Vue](https:/
 
 1. <a href="https://nodejs.org/en/download/">Node Js</a>
 2. Node_modules `npm install` or `yarn install`
-3. Backend API Foodiepie [`here`](https://github.com/alfaritsi21/chatchy-backend)
+3. Backend API Chatchy [`here`](https://github.com/alfaritsi21/chatchy-backend)
 
 ## How to Install
 
-1. Download this Project or you can type `git clone https://github.com/alfaritsi21/foodiepie-frontend`
+1. Download this Project or you can type `git clone https://github.com/alfaritsi21/chatchy.git`
 2. Open app's directory in CMD or Terminal
 3. Type `npm install` or `yarn install`
-4. Type `npm start`
-
-## Visit the Web
-
-You can visit the web [`here`](https://www.google.com/)
-
-## Compiles and hot-reloads for development
+4. Add .env file at root folder project
 
 ```
-npm run serve
-```
-
-## Compiles and minifies for production
+VUE_APP_URL1 = http://127.0.0.1:3001/
+VUE_APP_URL = https://backend-chatchy.fwdev.online/
 
 ```
-npm run build
-```
 
-## Customize configuration
+5. Type `npm run serve`
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Acknowledgements
+
+- [Axios](https://www.npmjs.com/package/axios)
+- [Vuex](https://vuex.vuejs.org/)
+- [Express](https://www.npmjs.com/package/express)
+- [Ant-Design-Vue](https://antdv.com/)
 
 ## License
 
