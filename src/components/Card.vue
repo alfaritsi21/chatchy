@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div v-show="false" class="card">
     <a-row>
       <a-col :span="8" class="photo">
         <div class="information">

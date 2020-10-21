@@ -2,7 +2,27 @@
   <div class="home">
     <a-row>
       <a-col :span="7" class="app-menu">
-        <Menu />
+        <Menu class="main-menu" />
+        <!-- <div style="width: 146px">
+          <a-button
+            type="primary"
+            style="margin-bottom: 16px"
+            @click="toggleCollapsed"
+          >
+            <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" />
+          </a-button>
+          <a-menu
+            :default-selected-keys="['1']"
+            :default-open-keys="['sub1']"
+            mode="inline"
+            theme="dark"
+            :inline-collapsed="collapsed"
+          >
+            <a-menu-item key="1">
+              <p>a</p>
+            </a-menu-item>
+          </a-menu>
+        </div> -->
       </a-col>
       <a-col :span="17" class="app-chat">
         <div v-show="showChat">
@@ -33,6 +53,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
+  data() {
+    return {
+      collapsed: false
+    }
+  },
   components: {
     Menu,
     Chat,
@@ -52,6 +77,9 @@ export default {
     contact() {
       this.showChatroom = false
       this.showContact = true
+    },
+    toggleCollapsed() {
+      this.collapsed = !this.collapsed
     }
   }
 }

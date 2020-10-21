@@ -125,7 +125,7 @@
           style="color: rgba(0, 0, 0, 0.25)"
         />
       </a-col>
-      <a-col :span="6" class="header-menu">
+      <a-col :span="6" class="header-menu menu-plus">
         <a-icon
           type="plus"
           class="menu-icon-plus"
@@ -139,17 +139,52 @@
     <div class="profile-container"><Profile /></div>
 
     <!-- MESSAGE INDICATOR -->
-    <a-row>
+    <a-row class="message-indicator">
       <a-col :span="8" class="indicator" @click="isActive">All</a-col>
       <a-col :span="8" class="indicator" @click="isActive">Important</a-col>
       <a-col :span="8" class="indicator" @click="isActive">Unread</a-col>
     </a-row>
     <div class="card-container">
-      <div @click="targetClick(11)">
+      <div>
         <Card />
-      </div>
-      <div @click="targetClick(23)">
-        <Card />
+        <div
+          class="card"
+          v-for="(item, index) in getContactData"
+          :key="index"
+          @click="targetClick(item)"
+        >
+          <a-row>
+            <a-col :span="8" class="photo">
+              <div class="information">
+                <img v-bind:src="urlApi + item.user_image" alt />
+              </div>
+            </a-col>
+            <a-col :span="16" class="details">
+              <a-row>
+                <a-col :span="18">
+                  <p class="details-name">
+                    <b>{{ item.user_nickname }}</b>
+                  </p>
+                </a-col>
+                <a-col :span="6">
+                  <p class="details-time" v-show="false">21:21</p>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="18">
+                  <p class="details-message">{{ item.user_phone }}</p>
+                </a-col>
+                <a-col :span="6">
+                  <a-badge
+                    v-show="false"
+                    count="109"
+                    :number-style="{ backgroundColor: '#7E98DF' }"
+                  />
+                </a-col>
+              </a-row>
+            </a-col>
+          </a-row>
+        </div>
       </div>
     </div>
   </div>
@@ -170,16 +205,24 @@ export default {
   },
   data() {
     return {
+      urlApi: process.env.VUE_APP_URL,
       target: { user_id: 0, user_nickname: '', user_image: '' },
       socket: io('http://localhost:3001'),
-      user: { user_nickname: '' }
+      user: { user_nickname: '' },
+      messages: []
     }
   },
   created() {
     this.initializeUser()
   },
   computed: {
-    ...mapGetters(['userData', 'getTarget'])
+    ...mapGetters(['userData', 'getTarget', 'getContactData'])
+  },
+  mounted() {
+    this.socket.on('chatMessage', (data) => {
+      this.messages.push(data)
+      this.setMessages(this.messages)
+    })
   },
   methods: {
     initializeUser() {
@@ -190,11 +233,14 @@ export default {
       'setShowChat',
       'setShowChatroom',
       'setShowContact',
-      'setShowInvite'
+      'setShowInvite',
+      'setMessages'
     ]),
     ...mapActions(['setTargetAction']),
-    targetClick(id) {
-      this.target.user_id = id
+    targetClick(target) {
+      console.log(target)
+      this.messages = []
+      this.target = target
       this.setTargetAction(this.target)
       this.setShowChatroom()
       this.socket.emit('getMessage', {
@@ -202,12 +248,10 @@ export default {
         target: this.target
       })
     },
-    // eslint-disable-next-line space-before-function-paren
     onSearch(value) {
       console.log(value)
     },
     ...mapActions({ handleLogout: 'logout' })
-    // eslint-disable-next-line space-before-function-paren
   }
 }
 </script>
@@ -307,11 +351,16 @@ export default {
 .card-container {
   height: 430px;
   overflow-y: scroll;
+  /* background-color: red; */
 }
 
 .card-container::-webkit-scrollbar {
   display: none;
 }
+
+/* .card {
+  background-color: orange;
+} */
 
 .text-dropdown {
   padding-left: 10px;
@@ -325,5 +374,43 @@ export default {
   letter-spacing: -0.165px;
 
   color: #ffffff;
+}
+
+@media only screen and (max-width: 766px) {
+  .header-logo p {
+    font-size: 22px;
+    margin-top: -5px;
+    margin-left: -15px;
+  }
+
+  .menu-plus {
+    display: none;
+  }
+
+  .information img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: -20px;
+    text-align: center;
+    margin-left: 30px;
+  }
+
+  .details-name {
+    margin-top: 90px;
+    margin-left: -25px;
+    font-size: 90%;
+    text-align: center;
+  }
+
+  .details-message {
+    margin-left: -25px;
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+  .message-indicator {
+    display: none;
+  }
 }
 </style>

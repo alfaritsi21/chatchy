@@ -5,7 +5,11 @@
         <a-row>
           <a-col :span="3" class="photo">
             <div class="information">
-              <img v-bind:src="urlApi + userData.user_image" alt />
+              <img
+                class="image-profile"
+                v-bind:src="urlApi + userData.user_image"
+                alt
+              />
             </div>
           </a-col>
           <a-col :span="18" class="details">
@@ -58,13 +62,15 @@
             </div>
             <!-- ================================================== -->
             <div class="phone">
-              <p class="title-details">Location</p>
+              <p class="title-details title-location">Location</p>
             </div>
+
             <GmapMap
+              class="user-location"
               :center="coordinate"
               :zoom="10"
               map-type-id="terrain"
-              style="width: 500px; height: 300px"
+              style="width: 360px; height: 300px"
             >
               <GmapMarker
                 :position="coordinate"
@@ -294,6 +300,13 @@ export default {
       evt.preventDefault()
       alert(JSON.stringify(this.form))
     },
+    showModal() {
+      this.visible = true
+    },
+    handleOk(e) {
+      console.log(e)
+      this.visible = false
+    },
     clickMarker(position) {
       console.log('clicked')
       console.log(position)
@@ -453,5 +466,41 @@ export default {
   letter-spacing: -0.165px;
 
   color: #ffffff;
+}
+
+@media only screen and (max-width: 766px) {
+  .detail-profile {
+    font-size: 80%;
+  }
+
+  .information img {
+    width: 100px;
+    height: 80px;
+  }
+
+  .details-name {
+    margin-top: 90px;
+    margin-left: -25px;
+  }
+
+  .details-message {
+    margin-left: -25px;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+  .user-location {
+    display: none;
+  }
+
+  .title-location {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .contact-button {
+    display: none;
+  }
 }
 </style>

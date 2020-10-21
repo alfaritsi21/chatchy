@@ -35,11 +35,11 @@
       <p v-if="typing">
         <em>{{ typing.user_nickname }} is typing a message...</em>
       </p>
-      <div v-for="(value, index) in messages" :key="index">
+      <div v-for="(value, index) in getMessages" :key="index">
         <div class="balloon-sender" v-if="checkCurrentUser(value.user)">
           <a-row>
             <a-col :span="6"></a-col>
-            <a-col :span="16" class="style-balloon">
+            <a-col :span="15" class="style-balloon">
               <p class="text-chat">
                 <strong>{{ value.user.user_nickname }} : </strong
                 >{{ value.message }}
@@ -63,7 +63,7 @@
                 class="image-receiver"
               />
             </a-col>
-            <a-col :span="16" class="style-balloon">
+            <a-col :span="15" class="style-balloon">
               <p class="text-chat-receiver">
                 <strong>{{ value.user.user_nickname }} : </strong
                 >{{ value.message }}
@@ -93,14 +93,14 @@
           <a-icon
             type="plus"
             :style="{ fontSize: '25px', color: '#7E98DF' }"
-            class="message-send"
+            class="message-send message-add"
           />
         </a-col>
         <a-col :span="1">
           <a-icon
             type="smile"
             :style="{ fontSize: '25px', color: '#7E98DF' }"
-            class="message-send"
+            class="message-send message-add"
           />
         </a-col>
         <a-col :span="1">
@@ -118,7 +118,7 @@
 
 <script>
 import io from 'socket.io-client'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 // import Navbar from '../components/chat/Navbar'
 // import Footer from '../components/chat/Footer'
@@ -137,12 +137,12 @@ export default {
       target: { user_id: '1' },
       room: 'arqi',
       message: '',
-      messages: [],
-      typing: false
+      typing: false,
+      tempmessages: []
     }
   },
   computed: {
-    ...mapGetters(['userData', 'getTarget'])
+    ...mapGetters(['userData', 'getTarget', 'getMessages'])
   },
   created() {
     this.initializeUser()
@@ -164,19 +164,24 @@ export default {
     //   target: this.target
     // })
     this.socket.on('chatMessage', (data) => {
-      this.messages.push(data)
+      this.tempmessages.push(data)
+      console.log(data)
+      this.setMessages(this.tempmessages)
+      console.log(this.tempmessages)
     })
     this.socket.on('typingMessage', (data) => {
       this.typing = data
     })
   },
   methods: {
+    ...mapMutations(['setMessages']),
     initializeUser() {
       this.user = this.userData
       this.target = this.getTarget
+      this.tempmessages = this.getMessages
     },
     checkCurrentUser(user) {
-      console.log(this.user.user_id === user.user_id)
+      // console.log(this.user.user_id === user.user_id)
       return this.user.user_id === user.user_id
     },
     sendMessage() {
@@ -187,7 +192,7 @@ export default {
       // this.socket.emit('globalMessage', setData)
       // this.socket.emit('privateMessage', setData)
       // this.socket.emit('broadcastMessage', setData)
-
+      this.tempmessages = []
       console.log(this.user.user_id + '-' + this.target.user_id)
       const setData = {
         user: this.user,
@@ -196,7 +201,6 @@ export default {
       }
       this.socket.emit('postMessage', setData)
       this.message = ''
-      this.messages = []
       this.socket.emit('getMessage', {
         user: this.user,
         target: this.target
@@ -346,5 +350,41 @@ export default {
 
 .message-send:hover {
   cursor: pointer;
+}
+
+@media only screen and (max-width: 766px) {
+  .image-receiver {
+    display: none;
+  }
+
+  .message-add {
+    display: none;
+  }
+
+  .details-name {
+    text-align: center;
+  }
+
+  .details-message {
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+  .details-name {
+    margin-left: 20px;
+  }
+
+  .details-message {
+    margin-left: 20px;
+  }
+
+  .message-send {
+    font-size: 20px;
+  }
+
+  .style-balloon {
+    margin-left: 15px;
+  }
 }
 </style>

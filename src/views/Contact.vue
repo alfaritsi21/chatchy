@@ -46,7 +46,10 @@
                   </p>
                 </a-col>
                 <a-col :span="6">
-                  <a-button class="contact-button" @click="showModal">
+                  <a-button
+                    class="contact-button view-location"
+                    @click="showModal"
+                  >
                     <p class="details-button">
                       <b>View Location</b>
                     </p>
@@ -60,7 +63,7 @@
                       :center="coordinate"
                       :zoom="10"
                       map-type-id="terrain"
-                      style="width: 500px; height: 300px"
+                      style="width: 460px; height: 300px"
                     >
                       <GmapMarker
                         :position="coordinate"
@@ -73,7 +76,10 @@
                   </a-modal>
                 </a-col>
                 <a-col :span="6">
-                  <a-button class="contact-button" @click="targetClick(item)">
+                  <a-button
+                    class="contact-button send-message"
+                    @click="targetClick(item)"
+                  >
                     <p class="details-button">
                       <b>Send Message</b>
                     </p>
@@ -94,6 +100,26 @@
                 <a-col :span="24">
                   <p class="details-message">@{{ item.user_name }}</p>
                 </a-col>
+                <div>
+                  <a-button class="add-on-button" @click="showModal">
+                    <p class="details-button">
+                      <b>View Location</b>
+                    </p>
+                  </a-button>
+                  <a-button class="add-on-button" @click="targetClick(item)">
+                    <p class="details-button">
+                      <b>Send Message</b>
+                    </p>
+                  </a-button>
+                  <a-button
+                    class="add-on-button-delete"
+                    @click="deleteContact(item)"
+                  >
+                    <p class="details-button">
+                      <b>Delete Contact</b>
+                    </p>
+                  </a-button>
+                </div>
               </a-row>
             </a-col>
           </a-row>
@@ -275,8 +301,64 @@ export default {
   height: 30px;
 }
 
+.add-on-button {
+  margin-top: 10px;
+  background-color: #7e98df;
+  border-radius: 10px;
+  height: 30px;
+}
+
+.add-on-button-delete {
+  margin-top: 10px;
+  background-color: #c70323;
+  border-radius: 10px;
+  height: 30px;
+}
+
 .details-button {
   padding-top: 5px;
   color: #ffffff;
+}
+
+@media only screen and (max-width: 1023px) {
+  .search-box {
+    margin-left: 50px;
+  }
+
+  .details-name {
+    margin-left: 65px;
+  }
+
+  .details-message {
+    text-align: center;
+    margin-left: 30px;
+  }
+
+  .contact-button {
+    display: none;
+  }
+
+  .contact-button-delete {
+    display: none;
+  }
+
+  /* .view-location {
+    margin-left: 36px;
+  }
+
+  .send-message {
+    display: flex;
+    flex-direction: row;
+  } */
+}
+
+@media only screen and (min-width: 1023px) {
+  .add-on-button {
+    display: none;
+  }
+
+  .add-on-button-delete {
+    display: none;
+  }
 }
 </style>

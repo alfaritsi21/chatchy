@@ -35,40 +35,49 @@
         <div>
           <a-row>
             <a-col :span="3" class="photo"> </a-col>
-            <a-col :span="3" class="photo">
-              <div class="information">
-                <!-- <img v-bind:src="urlApi + item.user_image" alt /> -->
-                <img v-bind:src="urlApi + resultContact.user_image" alt />
-              </div>
-            </a-col>
-            <a-col :span="15" class="details">
-              <a-row>
-                <a-col :span="12">
-                  <p class="details-name">
-                    <b>{{ resultContact.user_nickname }}</b>
-                  </p>
-                </a-col>
-                <a-col :span="12">
-                  <a-button class="contact-button" @click="addContact()">
-                    <p class="details-button">
-                      <a-icon
-                        type="user-add"
-                        size="large"
-                        :style="{ fontSize: '20px', color: '#ffffff' }"
-                      />
+            <div class="result-invite" v-show="result">
+              <a-col :span="3" class="photo">
+                <div class="information">
+                  <img v-bind:src="urlApi + resultContact.user_image" alt />
+                </div>
+              </a-col>
+              <a-col :span="15" class="details">
+                <a-row>
+                  <a-col :span="12">
+                    <p class="details-name">
+                      <b>{{ resultContact.user_nickname }}</b>
                     </p>
-                  </a-button>
-                </a-col>
-              </a-row>
-              <a-row>
-                <a-col :span="24">
-                  <p class="details-message">@{{ resultContact.user_name }}</p>
-                </a-col>
-              </a-row>
-            </a-col>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-button class="contact-button" @click="addContact()">
+                      <p class="details-button">
+                        <a-icon
+                          v-show="clickAdd"
+                          type="user-add"
+                          size="large"
+                          :style="{ fontSize: '20px', color: '#ffffff' }"
+                        />
+                        <a-icon
+                          v-show="clickSuccess"
+                          type="check"
+                          size="large"
+                          :style="{ fontSize: '20px', color: '#ffffff' }"
+                        />
+                      </p>
+                    </a-button>
+                  </a-col>
+                </a-row>
+                <a-row>
+                  <a-col :span="24">
+                    <p class="details-message">
+                      @{{ resultContact.user_name }}
+                    </p>
+                  </a-col>
+                </a-row>
+              </a-col>
+            </div>
           </a-row>
         </div>
-        <hr />
       </div>
     </div>
   </div>
@@ -82,9 +91,13 @@ export default {
   components: {},
   data() {
     return {
+      urlApi: process.env.VUE_APP_URL,
       inputSearch: '',
       resultContact: {},
-      user: {}
+      user: {},
+      result: false,
+      clickAdd: true,
+      clickSuccess: false
     }
   },
   computed: {
@@ -105,7 +118,11 @@ export default {
       this.searchContacts(data)
         .then((response) => {
           console.log(response)
+          this.result = true
+          this.clickAdd = true
+          this.clickSuccess = false
           this.resultContact = response[0]
+          console.log(this.resultContact)
         })
         .catch((error) => {
           console.log(error)
@@ -119,6 +136,8 @@ export default {
       console.log(data)
       this.addContacts(data)
         .then((response) => {
+          this.clickAdd = false
+          this.clickSuccess = true
           this.getContacts()
         })
         .catch((error) => {
@@ -202,5 +221,21 @@ export default {
 .details-button {
   padding-top: 5px;
   color: #ffffff;
+}
+
+@media only screen and (max-width: 766px) {
+  .search-box {
+    margin-left: 50px;
+  }
+
+  .details-name {
+    margin-top: 70px;
+    margin-left: -40px;
+    text-align: center;
+  }
+
+  .details-message {
+    margin-left: -10px;
+  }
 }
 </style>
